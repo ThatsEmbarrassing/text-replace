@@ -4,6 +4,7 @@
 	"description": "",
 	"main": "./dist/text-replace.js",
 	"types": "./dist/types/index.d.ts",
+	"readme": "./readme/en/",
 	"files": [
 		"dist/"
 	],
