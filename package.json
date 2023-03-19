@@ -5,6 +5,7 @@
 	"main": "./dist/text-replace.js",
 	"types": "./dist/types/index.d.ts",
 	"readme": "./readme/en/README.en.md",
+	"repository": "https://github.com/ThatsEmbarrassing/text-replace",
 	"files": [
 		"dist/"
 	],
