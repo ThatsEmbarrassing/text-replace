@@ -26,6 +26,7 @@ export default defineConfig({
 			copyDtsFiles: true,
 			outputDir: path.resolve(__dirname, "dist/types"),
 			clearPureImport: true,
+			tsConfigFilePath: path.resolve(__dirname, "./tsconfig.json"),
 		}),
 	],
 	resolve: {

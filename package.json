@@ -1,13 +1,13 @@
 {
 	"name": "text-replace",
-	"version": "1.0.0",
+	"version": "1.0.2",
 	"description": "",
 	"main": "./dist/text-replace.js",
 	"types": "./dist/types/index.d.ts",
 	"readme": "./readme/en/README.en.md",
 	"repository": "https://github.com/ThatsEmbarrassing/text-replace",
 	"files": [
-		"dist/"
+		"dist"
 	],
 	"exports": {
 		".": {
