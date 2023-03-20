@@ -10,3 +10,6 @@ indent_style = tab
 
 [*.json]
 tab_width = 4
+
+[*.{yaml, yml}]
+indent_size = 4
