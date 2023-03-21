@@ -24,7 +24,6 @@ describe("Template engine", () => {
 	const RANGE = new Option<[number, number]>("RANGE", (value, range) => {
 		if (!range) return value;
 		const [start = 0, end = value.length] = range;
-		console.log(value, start, end);
 
 		return value.slice(start, end);
 	});
