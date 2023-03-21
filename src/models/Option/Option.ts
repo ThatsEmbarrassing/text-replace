@@ -40,10 +40,14 @@ export class Option<Args extends Arg[] = Arg[]> {
 		}
 	}
 
-	private static parseArgs(argSeparator: string, args?: string): (string | number)[] | undefined {
-		if (args !== undefined)
-			return args.split(argSeparator).map((arg) => (Number.isNaN(Number(arg)) ? arg : Number(arg)));
-		return args;
+	private static parseArgs(argSeparator: string, args?: string): Arg[] | undefined {
+		if (args !== undefined) {
+			return args.split(argSeparator).map((arg) => {
+				if (!arg || arg === " ") return undefined;
+				if (!Number.isNaN(Number(arg))) return Number(arg);
+				else return arg;
+			});
+		}
 	}
 
 	/**
