@@ -10,6 +10,17 @@ describe("Template engine", () => {
 	const OPTION__1 = new Option("OPTION", () => "first");
 	const OPTION__2 = new Option("OPTION", () => "second");
 
+	const SPECIAL_OPTION_WITH_THREE_PARAMS = new Option<[number | undefined, number | undefined, number]>(
+		"SPEC_OPTION",
+		(value, args) => {
+			if (!args) throw new Error();
+
+			const [first = 2, second = 5, third] = args;
+
+			return `first_${first}__second_${second}__third_${third}`;
+		},
+	);
+
 	const RANGE = new Option<[number, number]>("RANGE", (value, range) => {
 		if (!range) return value;
 		const [start = 0, end = value.length] = range;
@@ -17,7 +28,7 @@ describe("Template engine", () => {
 		return value.slice(start, end);
 	});
 
-	const REPEAT = new Option<[number | undefined, string]>("REPEAT", (value, args) => {
+	const REPEAT = new Option<[number | undefined, string | undefined]>("REPEAT", (value, args) => {
 		if (!args) throw new Error("Not enough arguments");
 		const [times, separator = ""] = args;
 		if (!times) throw new Error("Times parameter is missing");
@@ -73,19 +84,44 @@ describe("Template engine", () => {
 
 	test("options with parameters", () => {
 		const replace = Configure({
-			globalOptions: [RANGE],
+			globalOptions: [RANGE, REPEAT, UPPER],
 			variables: [FILENAME],
 		});
 
 		const text1 = "$[FILENAME:RANGE(0, 3)]";
-		const text2 = "$[FILENAME:RANGE(12)]";
-		const text3 = "$[FILENAME:RANGE(, 11)]";
-		const text4 = "$[FILENAME:RANGE]";
 
 		expect(replace(text1)).toBe("app");
+	});
+
+	test("options with optional parameters", () => {
+		const replace = Configure({
+			globalOptions: [RANGE, REPEAT, SPECIAL_OPTION_WITH_THREE_PARAMS],
+			variables: [FILENAME],
+		});
+
+		const text1 = "$[FILENAME:WITHOUT_EXT:RANGE(0, )]";
+		const text2 = "$[FILENAME:RANGE(12)]";
+		const text3 = "$[FILENAME:WITHOUT_EXT:RANGE(, 11)]";
+		const text4 = "$[FILENAME:WITHOUT_EXT:RANGE]";
+		const text5 = "$[FILENAME:ONLY_EXT:REPEAT(3, |)]";
+		const text6 = "$[FILENAME:ONLY_EXT:REPEAT(5, )]";
+		const text7 = "$[FILENAME:ONLY_EXT:REPEAT(5)]";
+		const text8 = "$[FILENAME:ONLY_EXT:REPEAT(, |)]";
+		const text9 = "$[FILENAME:SPEC_OPTION(1, , 5)]";
+		const text10 = "$[FILENAME:SPEC_OPTION(, , 10)]";
+		const text11 = "$[FILENAME:SPEC_OPTION]";
+
+		expect(replace(text1)).toBe("application");
 		expect(replace(text2)).toBe("js");
 		expect(replace(text3)).toBe("application");
-		expect(replace(text4)).toBe("application.js");
+		expect(replace(text4)).toBe("application");
+		expect(replace(text5)).toBe("js|js|js");
+		expect(replace(text6)).toBe("jsjsjsjsjs");
+		expect(replace(text7)).toBe("jsjsjsjsjs");
+		expect(() => replace(text8)).toThrow();
+		expect(replace(text9)).toBe("first_1__second_5__third_5");
+		expect(replace(text10)).toBe("first_2__second_5__third_10");
+		expect(() => replace(text11)).toThrow();
 	});
 
 	test("option's combinations", () => {
