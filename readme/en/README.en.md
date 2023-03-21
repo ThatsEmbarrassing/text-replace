@@ -12,6 +12,7 @@
 			- [Global options](#global-options)
 			- [Local options](#local-options)
 			- [Options priority](#options-priority)
+			- [Optional parameters](#optional-parameters)
 		- [Template options](#template-options)
 
 ## What is it
@@ -373,6 +374,27 @@ const replace = Configure({
 replace("$[VAR:OPTION] $[DATE:OPTION]");
 // Expected: "$[VAR:OPTION] $[CURRENT_DATE:OPTION]" -> "local global"
 ```
+
+#### Optional parameters
+
+<a name="optional-parameters"></a>
+
+When we call function or method, sometimes we need to skip a parameter.
+In this package you can also do it!
+
+Let's take the RANGE option. What if we want to take a diapason from 1 to the end?
+Or from the beginning to 5 index?
+
+It's done like that:
+
+```JavaScript
+	replace("$[FILENAME:WITHOUT_EXT:RANGE(1, )]"); // Expected: pplication
+	replace("$[FILENAME:RANGE(, 5)]"); // Expected: appli
+```
+
+It works with any number of parameters. It will also work if you want to skip several parameters.
+**However, keep in mind that your option must handle such situations.
+Otherwise, its behavior can be unpredictable!**
 
 ### Template options
 
