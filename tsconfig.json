@@ -18,16 +18,14 @@
 		"types": ["jest", "node"],
 		"skipLibCheck": true,
 		"paths": {
-			"@/*": ["./src/*"],
-			"@/helpers/*": ["./src/helpers/*"],
-			"@/models*": ["./src/models/*"]
-		}
+			"@/*": ["./src/*"]
+		},
 	},
 	"ts-node": {
 		"compilerOptions": {
 			"module": "CommonJS"
 		}
 	},
-	"include": ["src/**/*"],
-	"exclude": ["node_modules/", "src/**/test/*"]
+	"include": ["src/**/*", "tests"],
+	"exclude": ["node_modules/"]
 }
