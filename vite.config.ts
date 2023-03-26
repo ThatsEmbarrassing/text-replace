@@ -16,8 +16,7 @@ export default defineConfig({
 		rollupOptions: {
 			output: {
 				exports: "named",
-			},
-			external: (id) => id.includes("test"),
+			}
 		},
 	},
 	plugins: [
