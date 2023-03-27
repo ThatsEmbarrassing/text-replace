@@ -1,4 +1,4 @@
-import { BaseError, BaseErrorConstructor } from "@/errors";
+import { BaseError, BaseErrorConstructor } from "./BaseError";
 
 export type OptionErrorName = "APPLY_OPTION_ERROR";
 

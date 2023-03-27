@@ -1,5 +1,5 @@
-import { BaseError } from "../../CustomErrors/BaseError";
-import { ErrorHandler } from "../ErrorHandle/ErrorHandle";
+import { BaseError } from "../CustomErrors/BaseError";
+import { ErrorHandler } from "./ErrorHandle";
 
 export class DefaultErrorHandler implements ErrorHandler {
 	handle(err: BaseError<string>): string {

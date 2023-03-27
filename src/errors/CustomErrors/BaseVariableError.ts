@@ -1,4 +1,4 @@
-import { BaseError, BaseErrorConstructor } from "@/errors";
+import { BaseError, BaseErrorConstructor } from "./BaseError";
 
 export type VariableErrorName = "GET_VALUE_ERROR";
 

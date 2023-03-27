@@ -1,5 +1,5 @@
-import { ApplyOptionError } from "../../CustomErrors";
-import { ErrorHandler } from "../ErrorHandle/ErrorHandle";
+import { ApplyOptionError } from "../CustomErrors";
+import { ErrorHandler } from "./ErrorHandle";
 
 export class ApplyOptionErrorHandler implements ErrorHandler {
 	handle(err: ApplyOptionError): string {

@@ -1,5 +1,5 @@
-import { GetValueError } from "../../CustomErrors";
-import { ErrorHandler } from "../ErrorHandle/ErrorHandle";
+import { GetValueError } from "../CustomErrors";
+import { ErrorHandler } from "./ErrorHandle";
 
 export class GetValueErrorHandler implements ErrorHandler {
 	handle(err: GetValueError): string {
