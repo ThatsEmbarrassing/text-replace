@@ -36,7 +36,7 @@
 		"lint:ts:fix": "eslint ./**/*.ts --fix",
 		"test": "jest --config './config/jest/jest.config.ts'"
 	},
-	"keywords": [],
+	"keywords": ["text templates", "text", "text replace", "template"],
 	"author": "",
 	"license": "MIT",
 	"devDependencies": {
