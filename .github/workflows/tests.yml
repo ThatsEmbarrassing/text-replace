@@ -1,0 +1,41 @@
+name: dev
+on:
+  push:
+    branches: [dev, release]
+    paths-ignore:
+      - "**.md"
+      - "readme/**"
+      - "package-lock.json"
+      - ".prettierc"
+      - ".editorconfig"
+  pull_request:
+    types: [opened, edited, reopened]
+    branches: [dev]
+    paths-ignore:
+      - "**.md"
+      - "readme/**"
+      - ".prettierc"
+      - ".editorconfig"
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: get source code from dev branch
+        uses: actions/checkout@v3
+        with:
+          ref: dev
+      - name: install deps
+        run: npm ci
+      - name: run tests
+        run: npm run test
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: get source code from dev branch
+        uses: actions/checkout@v3
+        with:
+          ref: dev
+      - name: install deps
+        run: npm ci
+      - name: run linting
+        run: npm run lint:ts
