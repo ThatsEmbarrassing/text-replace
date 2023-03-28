@@ -5,7 +5,7 @@
  * @param {Array|undefined} args
  */
 
-import { ApplyOptionError, BaseError } from "@/errors";
+import { ApplyOptionError, BaseError } from "@errors/custom";
 import { Arg } from "@/helpers";
 
 export type TransformFunction<Args extends Arg[]> = (value: string, args?: Args) => string;

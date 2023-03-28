@@ -3,20 +3,29 @@ import { defineConfig } from "vite";
 import dts from "vite-plugin-dts";
 
 export default defineConfig({
+	esbuild: {
+		treeShaking: true,
+	},
 	build: {
 		outDir: path.resolve(__dirname, "dist"),
 		lib: {
-			entry: path.resolve(__dirname, "src/index.ts"),
+			entry: {
+				index: path.resolve(__dirname, "src/index.ts"),
+				"errors/errors": path.resolve(__dirname, "src/errors/CustomErrors/index.ts"),
+				"errors/handlers": path.resolve(__dirname, "src/errors/ErrorHandlers/index.ts"),
+			},
 			name: "text-replace",
-			formats: ["cjs", "es"],
-			fileName: "text-replace",
+			formats: ["cjs"],
+			fileName: "[name]",
 		},
+		minify: "esbuild",
 		sourcemap: false,
-		minify: "terser",
 		rollupOptions: {
 			output: {
 				exports: "named",
-			}
+				chunkFileNames: "chunks/chunk-[name].js",
+			},
+			treeshake: true,
 		},
 	},
 	plugins: [
@@ -31,6 +40,8 @@ export default defineConfig({
 	resolve: {
 		alias: {
 			"@": path.resolve(__dirname, "src"),
+			"@errors/custom": path.resolve(__dirname, "src/errors/CustomErrors"),
+			"@errors/hanlders": path.resolve(__dirname, "src/errors/ErrorHandlers"),
 		},
 	},
 });

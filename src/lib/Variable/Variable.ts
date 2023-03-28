@@ -1,6 +1,6 @@
 import { find, isAlreadyExist } from "@/helpers";
 import { Option } from "../Option/Option";
-import { GetValueError } from "@/errors";
+import { GetValueError } from "@errors/custom";
 
 export type Value = string | (() => string);
 

@@ -1,5 +1,5 @@
-import { BaseError, BaseErrorConstructor } from "@/errors";
-import { ErrorHandler } from "@/errors/ErrorHandlers";
+import { BaseErrorConstructor, BaseError } from "@errors/custom";
+import { ErrorHandler } from "@errors/hanlders";
 
 export type RepeatOptionErrorName = "ARGUMENTS_IS_MISSING" | "TIMES_PARAMETER_IS_MISSING";
 

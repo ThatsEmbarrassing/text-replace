@@ -1,4 +1,4 @@
-import { ApplyOptionError } from "@/errors";
+import { ApplyOptionError } from "@errors/custom";
 import { Option } from "@/lib";
 import { ArgumentsIsMissingError, TimesParameterIsMissingError } from "./Common";
 

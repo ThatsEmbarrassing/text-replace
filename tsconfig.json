@@ -17,9 +17,12 @@
 		"downlevelIteration": true,
 		"types": ["jest", "node"],
 		"skipLibCheck": true,
+		"baseUrl": ".",
 		"paths": {
-			"@/*": ["./src/*"]
-		},
+			"@/*": ["./src/*"],
+			"@errors/custom": ["./src/errors/CustomErrors"],
+			"@errors/hanlders": ["./src/errors/ErrorHandlers"]
+		}
 	},
 	"ts-node": {
 		"compilerOptions": {
