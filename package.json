@@ -1,6 +1,6 @@
 {
 	"name": "text-replace",
-	"version": "1.0.4",
+	"version": "1.1.0",
 	"description": "npm-package allowing you to find and replace variables to some values",
 	"main": "./dist/text-replace.js",
 	"types": "./dist/types/index.d.ts",
