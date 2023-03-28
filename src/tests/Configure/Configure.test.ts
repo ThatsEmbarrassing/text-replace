@@ -1,5 +1,5 @@
 import { Configure } from "@/Configure";
-import { ErrorHandle } from "@errors/hanlders";
+import { ErrorHandle } from "@errors/handlers";
 import {
 	ArgumentsIsMissingErrorHandler,
 	FILENAME,

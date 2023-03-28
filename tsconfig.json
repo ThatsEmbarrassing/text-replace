@@ -21,7 +21,7 @@
 		"paths": {
 			"@/*": ["./src/*"],
 			"@errors/custom": ["./src/errors/CustomErrors"],
-			"@errors/hanlders": ["./src/errors/ErrorHandlers"]
+			"@errors/handlers": ["./src/errors/ErrorHandlers"]
 		}
 	},
 	"ts-node": {
