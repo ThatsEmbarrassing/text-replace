@@ -16,6 +16,7 @@
 			- [Приоритет опций](#приоритет-опций)
 			- [Необязательные параметры](#необязательные-параметры)
 		- [Настройки шаблона](#настройки-шаблона)
+		- [Обработка ошибок](#обработка-ошибок)
 
 ## Что это?
 
@@ -438,4 +439,264 @@ const replace = Configure({
 
 replace("__VAR:UPPER:RANGE(0|2)__")
 // Ожидаемый результат: "__VAR:UPPER:RANGE(0|2)__" -> "VA"
+```
+
+### Обработка ошибок
+
+<a name="обработка-ошибок"></a>
+
+Начиная с версии 1.1.0, у вас есть возможность создавать и обрабатывать собственные ошибки.
+
+Создадим опцию REPEAT с двумя параметрами:
+
+_times_ - количесво повторений,
+
+_separator_ - разделитель между повторяющимися строками(по умолчанию равен пустой строке)
+
+TypeScript:
+
+```TypeScript
+const REPEAT = new Option<[number | undefined, string | undefined]>("REPEAT", (value, args) => {
+	if (!args) throw new Error("Требуется аргументы для опции REPEAT");
+	const [times, separator = ""] = args;
+	if (!times) throw new Error("Параметр times отсутствует");
+
+	return new Array(times).fill(value).join(separator);
+});
+```
+
+JavaScript:
+
+```JavaScript
+const REPEAT = new Option("REPEAT", (value, args) => {
+	if (!args) throw new Error("Требуется аргументы для опции REPEAT");
+	const [times, separator = ""] = args;
+	if (!times) throw new Error("Параметр times отсутствует");
+
+	return new Array(times).fill(value).join(separator);
+});
+```
+
+CommonJS:
+
+```JavaScript
+const REPEAT = new Option("REPEAT", function (value, args) {
+	if (!args) throw new Error("Требуются аргументы для опции REPEAT");
+	const [times, separator = ""] = args;
+	if (!times) throw new Error("Параметр times отсутствует");
+
+	return new Array(times).fill(value).join(separator);
+});
+```
+
+```JavaScript
+const replace = Configure({
+	globalOptions: [REPEAT],
+	variables: [FILENAME]
+});
+
+replace("$[FILENAME:REPEAT]");
+// Ожидаемый результат: "$[FILENAME:REPEAT] -> UnknownError: Error with message "Требуются аргументы для опции REPEAT"
+
+replace("$[FILENAME:REPEAT(, |)]");
+// Ожидаемый результат: "$[FILENAME:REPEAT(, |)]" -> UnknownError: Error with message "Параметр times отсутствует"
+```
+
+Если мы хотим кастомный вывод ошибки, то подобное можно провернуть следующим образом:
+
+1.Создадим собственные классы ошибок.
+
+TypeScript:
+
+```TypeScript
+import { BaseError } from "text-replace/errors";
+import type { BaseErrorConstructor } from "text-replace/errors";
+import type { ErrorHandler } from "text-replace/error-handlers"
+
+type RepeatOptionErrorName = "ARGUMENTS_IS_MISSING" | "TIMES_PARAMETER_IS_MISSING";
+
+// В параметр BaseErrorConstructor мы передаём все значения для свойства name
+type BaseRepeatOptionErrorConstructor = BaseErrorConstructor<RepeatOptionErrorName>;
+
+type ArgumentsIsMissingErrorConstructor = Omit<BaseRepeatOptionErrorConstructor, "name">;
+
+type TimesParameterIsMissingErrorConstructor = ArgumentsIsMissingErrorConstructor;
+
+// И здесь тоже
+class BaseRepeatOptionError extends BaseError<RepeatOptionErrorName> {
+	constructor(options: BaseRepeatOptionErrorConstructor) {
+		super(options);
+	}
+}
+
+class ArgumentsIsMissingError extends BaseRepeatOptionError {
+	constructor({ errorMessage }: ArgumentsIsMissingErrorConstructor) {
+		super({ name: "ArgumentsIsMissingError", errorMessage });
+	}
+}
+
+class TimesParameterIsMissingError extends BaseRepeatOptionError {
+	constructor({ errorMessage }: TimesParameterIsMissingErrorConstructor) {
+		super({ name: "TimesParameterIsMissingError", errorMessage });
+	}
+}
+```
+
+JavaScript:
+
+```JavaScript
+import { BaseError } from "text-replace/errors";
+
+class BaseRepeatOptionError extends BaseError {
+	constructor(options: BaseRepeatOptionErrorConstructor) {
+		super(options);
+	}
+}
+
+class ArgumentsIsMissingError extends BaseRepeatOptionError {
+	constructor({ errorMessage }) {
+		super({ name: "ArgumentsIsMissingError", errorMessage });
+	}
+}
+
+class TimesParameterIsMissingError extends BaseRepeatOptionError {
+	constructor({ errorMessage }) {
+		super({ name: "TimesParameterIsMissingError", errorMessage });
+	}
+}
+```
+
+CommonJS:
+
+```JavaScript
+const { BaseError } = require("text-replace/errors");
+
+class BaseRepeatOptionError extends BaseError {
+	constructor(options: BaseRepeatOptionErrorConstructor) {
+		super(options);
+	}
+}
+
+class ArgumentsIsMissingError extends BaseRepeatOptionError {
+	constructor({ errorMessage }) {
+		super({ name: "ArgumentsIsMissingError", errorMessage });
+	}
+}
+
+class TimesParameterIsMissingError extends BaseRepeatOptionError {
+	constructor({ errorMessage }) {
+		super({ name: "TimesParameterIsMissingError", errorMessage });
+	}
+}
+```
+
+2.Создадим обработчики для данных ошибок.
+
+TypeScript:
+
+```TypeScript
+class ArgumentsIsMissingErrorHandler implements ErrorHandler {
+	handle(err: BaseError): string {
+		return `${err.name}: Arguments is missing in REPEAT option`;
+	}
+}
+
+class TimesParameterIsMissingErrorHandler implements ErrorHandler {
+	handle(err: BaseError): string {
+		return `${err.name}: Times parameter is missing in REPEAT option`;
+	}
+}
+```
+
+JavaScript:
+
+```JavaScript
+class ArgumentsIsMissingErrorHandler {
+	handle(err) {
+		return `${err.name}: Arguments is missing in REPEAT option`;
+	}
+}
+
+class TimesParameterIsMissingErrorHandler {
+	handle(err) {
+		return `${err.name}: Times parameter is missing in REPEAT option`;
+	}
+}
+```
+
+CommonJS:
+
+```JavaScript
+class ArgumentsIsMissingErrorHandler {
+	handle(err) {
+		return `${err.name}: Arguments is missing in REPEAT option`;
+	}
+}
+
+class TimesParameterIsMissingErrorHandler {
+	handle(err) {
+		return `${err.name}: Times parameter is missing in REPEAT option`;
+	}
+}
+```
+
+3.Изменим код опции REPEAT
+
+TypeScript:
+
+```TypeScript
+const REPEAT = new Option<[number | undefined, string | undefined]>("REPEAT", (value, args) => {
+	if (!args) throw new ArgumentsIsMissingError();
+	const [times, separator = ""] = args;
+	if (!times) throw new TimesParameterIsMissingError();
+
+	return new Array(times).fill(value).join(separator);
+});
+```
+
+JavaScript:
+
+```JavaScript
+const REPEAT = new Option("REPEAT", (value, args) => {
+	if (!args) throw new ArgumentsIsMissingError();
+	const [times, separator = ""] = args;
+	if (!times) throw new TimesParameterIsMissingError();
+
+	return new Array(times).fill(value).join(separator);
+});
+```
+
+CommonJS:
+
+```JavaScript
+const REPEAT = new Option("REPEAT", function (value, args) {
+	if (!args) throw new ArgumentsIsMissingError();
+	const [times, separator = ""] = args;
+	if (!times) throw new TimesParameterIsMissingError();
+
+	return new Array(times).fill(value).join(separator);
+});
+```
+
+4.Создадим экземпляр класса ErrorHandle и добавим его в параметр функции Configure
+
+```JavaScript
+import { ErrorHandle } from "text-replace/error-handlers"
+
+const errorHandle = new ErrorHandle();
+
+errorHandle.use("ArgumentsIsMissingError", new ArgumentsIsMissingErrorHandler());
+errorHandle.use("TimesParameterIsMissingError", new TimesParameterIsMissingErrorHandler())
+
+const replace = Configure({
+	globalOptions: [REPEAT],
+	variables: [FILENAME],
+	errorHandle
+});
+
+replace("$[FILENAME:REPEAT]");
+// Ожидаемый результат: ArgumentsIsMissingError: Arguments is missing in REPEAT option
+
+replace("$[FILENAME:REPEAT(, |)]");
+// Ожидаемый результат: TimesParameterIsMissingError: Times parameter is missing in REPEAT option
 ```

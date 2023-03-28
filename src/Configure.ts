@@ -1,5 +1,12 @@
-import { Option, Value } from "./models";
-import { Template, TemplateOptions } from "./Template";
+import { Option, Value } from "./lib";
+import { Template } from "./lib/Template/Template";
+import { TemplateOptions } from "@/helpers";
+import {
+	DefaultErrorHandler,
+	ApplyOptionErrorHandler,
+	ErrorHandle,
+	GetValueErrorHandler,
+} from "./errors/ErrorHandlers/";
 
 export interface ConfigureVariable {
 	name: string;
@@ -11,6 +18,7 @@ export interface ConfigureOptions {
 	variables: ConfigureVariable[];
 	globalOptions: Option[];
 	templateOptions?: Partial<TemplateOptions>;
+	errorHandle?: ErrorHandle;
 }
 
 /**
@@ -33,8 +41,13 @@ export interface ConfigureOptions {
  *
  * @param {ConfigureOptions} options
  */
+
 export function Configure(options: ConfigureOptions) {
-	const { globalOptions, variables, templateOptions = {} } = options;
+	const { globalOptions, variables, errorHandle = new ErrorHandle(), templateOptions = {} } = options;
+
+	errorHandle.use("GET_VALUE_ERROR", new GetValueErrorHandler());
+	errorHandle.use("APPLY_OPTION_ERROR", new ApplyOptionErrorHandler());
+	errorHandle.use("default", new DefaultErrorHandler());
 
 	const template = new Template();
 
@@ -50,6 +63,12 @@ export function Configure(options: ConfigureOptions) {
 	});
 
 	return function replace(text: string) {
-		return template.render(text, templateOptions);
+		try {
+			return template.render(text, templateOptions);
+		} catch (err) {
+			const error = err as Error;
+
+			errorHandle.handle(error.name, error);
+		}
 	};
 }
