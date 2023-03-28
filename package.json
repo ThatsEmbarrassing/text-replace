@@ -11,19 +11,29 @@
 	],
 	"exports": {
 		".": {
-			"import": "./dist/text-replace.mjs",
-			"require": "./dist/text-replace.js",
+			"import": "./dist/index.js",
+			"require": "./dist/index.js",
 			"types": "./dist/types/index.d.ts",
-			"default": "./dist/text-replace.mjs"
+			"default": "./dist/index.js"
+		},
+		"./errors": {
+			"import": "./dist/errors/errors.js",
+			"require": "./dist/errors/errors.js",
+			"types": "./dist/types/errors/CustomErrors/index.d.ts",
+			"default": "./dist/errors/errors.js"
+		},
+		"./error-handlers": {
+			"import": "./dist/errors/handlers.js",
+			"require": "./dist/errors/handlers.js",
+			"types": "./dist/types/errors/ErrorHandlers/index.d.ts",
+			"default": "./dist/errors/handlers.js"
 		}
 	},
 	"scripts": {
 		"build": "vite build",
 		"lint:ts": "eslint ./**/*.ts",
 		"lint:ts:fix": "eslint ./**/*.ts --fix",
-		"test": "jest --config './config/jest/jest.config.ts'",
-		"minify-mjs": "npx terser ./dist/text-replace.mjs -o ./dist/text-replace.mjs",
-		"build-prepare": "npm run build && npm run minify-mjs"
+		"test": "jest --config './config/jest/jest.config.ts'"
 	},
 	"keywords": [],
 	"author": "",
@@ -44,7 +54,7 @@
 		"terser": "^5.16.6",
 		"ts-loader": "^9.4.2",
 		"ts-node": "^10.9.1",
-		"typescript": "^4.9.4",
+		"typescript": "^4.9.5",
 		"vite": "^4.1.4",
 		"vite-plugin-dts": "^2.1.0"
 	}

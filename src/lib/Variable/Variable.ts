@@ -1,5 +1,6 @@
 import { find, isAlreadyExist } from "@/helpers";
 import { Option } from "../Option/Option";
+import { GetValueError } from "@errors/custom";
 
 export type Value = string | (() => string);
 
@@ -49,10 +50,19 @@ export class Variable {
 	 *
 	 * @returns {string}
 	 */
-	public getValue(): string {
-		const value = typeof this.value === "function" ? this.value() : this.value;
+	public getValue(): string | never {
+		try {
+			const value = typeof this.value === "function" ? this.value() : this.value;
 
-		return value;
+			return value;
+		} catch (err) {
+			const error = err as Error;
+			throw new GetValueError({
+				variableName: this.name,
+				variableValue: undefined,
+				errorMessage: error.message,
+			});
+		}
 	}
 
 	/**

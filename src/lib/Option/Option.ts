@@ -5,8 +5,8 @@
  * @param {Array|undefined} args
  */
 
+import { ApplyOptionError, BaseError } from "@errors/custom";
 import { Arg } from "@/helpers";
-import { ApplyOptionError } from "./errors/ApplyOptionError";
 
 export type TransformFunction<Args extends Arg[]> = (value: string, args?: Args) => string;
 
@@ -30,13 +30,21 @@ export class Option<Args extends Arg[] = Arg[]> {
 	 * @param {Array} args - array of given parameters. Can be undefined if there is no parameters to the option
 	 * @returns {string}
 	 */
-	public apply(value: string, args?: Args): string {
+	public apply(value: string, args?: Args): string | never {
 		try {
 			return this.transform(value, args);
 		} catch (error) {
+			if (error instanceof BaseError) {
+				throw error;
+			}
 			if (error instanceof Error) {
-				throw new ApplyOptionError<Args>(this.name, value, args, error.message);
-			} else throw new ApplyOptionError<Args>(this.name, value, args);
+				throw new ApplyOptionError({
+					optionName: this.name,
+					value,
+					args,
+					errorMessage: error.message,
+				});
+			} else throw new Error();
 		}
 	}
 

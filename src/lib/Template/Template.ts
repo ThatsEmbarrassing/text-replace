@@ -1,11 +1,10 @@
-import { find, isAlreadyExist } from "./helpers";
-import { Option, Value, Variable } from "./models";
+import { find, isAlreadyExist, render, TemplateOptions } from "@/helpers";
+import type { Arg } from "@/helpers";
 
-import type { Arg } from "./helpers";
+import { Option } from "../Option/Option";
 
-type _TemplateOptionsKeys = "begin" | "end" | "prefix" | "suffix" | "argSeparator" | "optionSeparator";
-
-export type TemplateOptions = Record<_TemplateOptionsKeys, string>;
+import { Variable } from "../Variable/Variable";
+import type { Value } from "../Variable/Variable";
 
 interface IVariableObject<Variables extends string> {
 	name: Variables;
@@ -138,25 +137,19 @@ export class Template<Variables extends string = string> {
 	 * @param {Object} options - template options. See more:
 	 * @returns {string}
 	 */
-	public render(text: string, options: Partial<TemplateOptions>): string {
-		const {
-			prefix = "\\$",
-			suffix = "",
-			optionSeparator = ":",
-			begin = "\\[",
-			end = "\\]",
-			argSeparator = ", ",
-		} = options;
-		for (const variable of this.variables) {
-			const templateString = `${prefix}${begin}${variable.name}(\\${optionSeparator}[^\\]]+)?${end}${suffix}`;
-			const regex = new RegExp(templateString, "g");
-			text = text.replace(regex, (_, options: string) => {
-				const variableOptions = options ? options.split(optionSeparator) : [];
-				return variableOptions.reduce((currentValue, variableOption) => {
-					return this.replaceOne({ name: variable.name, value: currentValue }, variableOption, argSeparator);
-				}, variable.getValue());
+	public render(text: string, options: Partial<TemplateOptions>): string | never {
+		const { argSeparator = ", " } = options;
+
+		return this.variables.reduce((currentText, currentVariable) => {
+			return render({
+				options,
+				text: currentText,
+				variableName: currentVariable.name,
+				variableValue: currentVariable.getValue(),
+				renderCallback: (value, valueOption) => {
+					return this.replaceOne({ name: currentVariable.name, value }, valueOption, argSeparator);
+				},
 			});
-		}
-		return text;
+		}, text);
 	}
 }
