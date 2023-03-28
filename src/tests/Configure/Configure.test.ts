@@ -1,4 +1,5 @@
-import { Configure, ErrorHandle } from "@/Configure";
+import { Configure } from "@/Configure";
+import { ErrorHandle } from "@errors/hanlders";
 import {
 	ArgumentsIsMissingErrorHandler,
 	FILENAME,

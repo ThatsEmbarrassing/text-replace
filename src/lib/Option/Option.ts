@@ -44,7 +44,7 @@ export class Option<Args extends Arg[] = Arg[]> {
 					args,
 					errorMessage: error.message,
 				});
-			} else throw new Error();
+			} else throw new Error(`Expected thrown error, but got ${String(error)}`);
 		}
 	}
 

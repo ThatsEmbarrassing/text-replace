@@ -72,5 +72,3 @@ export function Configure(options: ConfigureOptions) {
 		}
 	};
 }
-
-export { ErrorHandle };
