@@ -634,6 +634,8 @@ class TimesParameterIsMissingErrorHandler {
 
 3.Сhange REPEAT option's code
 
+TypeScript:
+
 ```TypeScript
 const REPEAT = new Option<[number | undefined, string | undefined]>("REPEAT", (value, args) => {
 	if (!args) throw new ArgumentsIsMissingError();
