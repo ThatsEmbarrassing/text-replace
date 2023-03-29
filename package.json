@@ -2,13 +2,13 @@
 	"name": "text-replace",
 	"version": "1.1.0",
 	"description": "npm-package allowing you to find and replace variables to some values",
-	"main": "./dist/text-replace.js",
+	"main": "./dist/index.js",
+	"type": "commonjs",
 	"types": "./dist/types/index.d.ts",
 	"readme": "./readme/en/README.en.md",
 	"repository": "https://github.com/ThatsEmbarrassing/text-replace",
 	"files": [
-		"dist",
-		"types"
+		"dist"
 	],
 	"exports": {
 		".": {
@@ -18,16 +18,16 @@
 			"default": "./dist/index.js"
 		},
 		"./errors": {
-			"import": "./dist/errors/errors.js",
-			"require": "./dist/errors/errors.js",
+			"import": "./dist/errors.js",
+			"require": "./dist/errors.js",
 			"types": "./dist/types/errors/CustomErrors/index.d.ts",
-			"default": "./dist/errors/errors.js"
+			"default": "./dist/errors.js"
 		},
 		"./error-handlers": {
-			"import": "./dist/errors/handlers.js",
-			"require": "./dist/errors/handlers.js",
+			"import": "./dist/error-handlers.js",
+			"require": "./dist/error-handlers.js",
 			"types": "./dist/types/errors/ErrorHandlers/index.d.ts",
-			"default": "./dist/errors/handlers.js"
+			"default": "./dist/error-handlers.js"
 		}
 	},
 	"scripts": {
@@ -36,7 +36,12 @@
 		"lint:ts:fix": "eslint ./**/*.ts --fix",
 		"test": "jest --config './config/jest/jest.config.ts'"
 	},
-	"keywords": ["text templates", "text", "text replace", "template"],
+	"keywords": [
+		"text templates",
+		"text",
+		"text replace",
+		"template"
+	],
 	"author": "",
 	"license": "MIT",
 	"devDependencies": {

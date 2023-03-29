@@ -11,19 +11,20 @@ export default defineConfig({
 		lib: {
 			entry: {
 				index: path.resolve(__dirname, "src/index.ts"),
-				"errors/errors": path.resolve(__dirname, "src/errors/CustomErrors/index.ts"),
-				"errors/handlers": path.resolve(__dirname, "src/errors/ErrorHandlers/index.ts"),
+				errors: path.resolve(__dirname, "src/errors/CustomErrors/index.ts"),
+				"error-handlers": path.resolve(__dirname, "src/errors/ErrorHandlers/index.ts"),
 			},
 			name: "text-replace",
-			formats: ["cjs"],
 			fileName: "[name]",
+			formats: ["cjs"]
 		},
 		minify: "esbuild",
 		sourcemap: false,
 		rollupOptions: {
 			output: {
 				exports: "named",
-				chunkFileNames: "chunks/chunk-[name].js",
+				assetFileNames: "[name].[ext]",
+				chunkFileNames: "chunks/[name].[format].js",
 			},
 			treeshake: true,
 		},
