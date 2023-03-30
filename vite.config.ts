@@ -3,6 +3,7 @@ import { defineConfig } from "vite";
 import dts from "vite-plugin-dts";
 
 export default defineConfig({
+	mode: "production",
 	esbuild: {
 		treeShaking: true,
 	},
@@ -15,16 +16,14 @@ export default defineConfig({
 				"error-handlers": path.resolve(__dirname, "src/errors/ErrorHandlers/index.ts"),
 			},
 			name: "text-replace",
-			fileName: "[name]",
-			formats: ["cjs"]
+			fileName: "[format]/[name]",
+			formats: ["cjs", "es"],
 		},
 		minify: "esbuild",
 		sourcemap: false,
 		rollupOptions: {
 			output: {
 				exports: "named",
-				assetFileNames: "[name].[ext]",
-				chunkFileNames: "chunks/[name].[format].js",
 			},
 			treeshake: true,
 		},

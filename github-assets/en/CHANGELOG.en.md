@@ -1,4 +1,4 @@
-# [2023.03.28] - [1.1.0](https://github.com/ThatsEmbarrassing/text-replace/releases/tag/1.1.0) (Current)
+# [2023.03.28] - [1.1.0](https://github.com/ThatsEmbarrassing/text-replace/releases/tag/1.1.0) (DO NOT USE)
 
 ## New:
 
@@ -18,3 +18,19 @@
 ## Other improvements:
 
 - (~) Code refactoring
+
+---
+
+# [2023.03.29] - [1.1.1] (DO NOT USE)
+
+## Fixed:
+
+- (=) Fixed the problem with exports
+
+---
+
+# [2023.03.30] - [1.1.2](https://github.com/ThatsEmbarrassing/text-replace/releases/tag/1.1.2) (Current)
+
+## Fixed:
+
+- (=) Fixed the problem with types to exports.

@@ -1,33 +1,46 @@
 {
 	"name": "text-replace",
-	"version": "1.1.1",
+	"version": "1.1.2",
 	"description": "npm-package allowing you to find and replace variables to some values",
-	"main": "./dist/index.js",
+	"main": "./dist/es/index.mjs",
 	"type": "commonjs",
-	"types": "./dist/types/index.d.ts",
 	"readme": "./readme/en/README.en.md",
 	"repository": "https://github.com/ThatsEmbarrassing/text-replace",
 	"files": [
 		"dist"
 	],
+	"types": "./dist/types/index.d.ts",
 	"exports": {
 		".": {
-			"import": "./dist/index.js",
-			"require": "./dist/index.js",
+			"import": "./dist/es/index.mjs",
+			"require": "./dist/cjs/index.js",
 			"types": "./dist/types/index.d.ts",
-			"default": "./dist/index.js"
+			"default": "./dist/es/index.mjs"
 		},
 		"./errors": {
-			"import": "./dist/errors.js",
-			"require": "./dist/errors.js",
+			"import": "./dist/es/errors.mjs",
+			"require": "./dist/cjs/errors.js",
 			"types": "./dist/types/errors/CustomErrors/index.d.ts",
-			"default": "./dist/errors.js"
+			"default": "./dist/es/errors.mjs"
 		},
 		"./error-handlers": {
-			"import": "./dist/error-handlers.js",
-			"require": "./dist/error-handlers.js",
+			"import": "./dist/es/error-handlers.mjs",
+			"require": "./dist/cjs/error-handlers.js",
 			"types": "./dist/types/errors/ErrorHandlers/index.d.ts",
-			"default": "./dist/error-handlers.js"
+			"default": "./dist/es/error-handlers.mjs"
+		}
+	},
+	"typesVersions": {
+		"*": {
+			".": [
+				"./dist/types/index.d.ts"
+			],
+			"errors": [
+				"./dist/types/errors/CustomErrors/index.d.ts"
+			],
+			"error-handlers": [
+				"./dist/types/errors/ErrorHandlers/index.d.ts"
+			]
 		}
 	},
 	"scripts": {
