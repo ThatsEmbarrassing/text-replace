@@ -46,10 +46,6 @@ export class Variable {
 		return isAlreadyExist(this.options, name);
 	}
 
-	/**
-	 *
-	 * @returns {string}
-	 */
 	public getValue(): string | never {
 		try {
 			const value = typeof this.value === "function" ? this.value() : this.value;
@@ -63,13 +59,5 @@ export class Variable {
 				errorMessage: error.message,
 			});
 		}
-	}
-
-	/**
-	 *
-	 * @returns {Option[]}
-	 */
-	public getOptions(): Option[] {
-		return this.options.slice();
 	}
 }

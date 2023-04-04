@@ -1,3 +1,3 @@
-export * from "./Options";
-export * from "./Variables";
+export * from "./Options.assets";
+export * from "./Variables.assets";
 export * from "./Common";

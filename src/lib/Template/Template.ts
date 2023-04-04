@@ -82,21 +82,21 @@ export class Template<Variables extends string = string> {
 	 */
 	private replaceOne(variable: Record<"name" | "value", string>, variableOption: string, argSeparator: string): string {
 		const parsed = Option.parse(variableOption, argSeparator);
+
 		if (parsed) {
 			const { option, args } = parsed;
+
 			const foundOption = this.findVariableOption(variable.name, option) || this.findGlobalOption(option);
 
 			if (!foundOption) return variable.value;
 
-			return foundOption.apply(variable.value, args);
+			const result = foundOption.apply(variable.value, args);
+
+			return result;
 		}
 		return variable.value;
 	}
 
-	/**
-	 *
-	 * @param {Option} option
-	 */
 	public addGlobalOption<Args extends Arg[]>(option: Option<Args>) {
 		const isExist = this.isOptionAlreadyExist(option.name);
 
@@ -111,10 +111,6 @@ export class Template<Variables extends string = string> {
 		if (foundVariable) foundVariable.addOption(option);
 	}
 
-	/**
-	 *
-	 * @param {Variable} variable
-	 */
 	public addVariable(variable: IVariableObject<Variables>) {
 		const isExist = this.isVariableAlreadyExist(variable.name);
 
@@ -134,22 +130,30 @@ export class Template<Variables extends string = string> {
 	 * 		this.render("$[FILENAME:WITHOUT_EXT]") -> "application"
 	 * 		this.render("$[FILENAME:ONLY_EXT]") -> "js"
 	 * @param {string} text - source text with the variables and their options
-	 * @param {Object} options - template options. See more:
+	 * @param {Object} templateOptions - template options. See more: https://github.com/ThatsEmbarrassing/text-replace/blob/release/github-assets/en/README.en.md#template-options
 	 * @returns {string}
 	 */
-	public render(text: string, options: Partial<TemplateOptions>): string | never {
-		const { argSeparator = ", " } = options;
+	public render(text: string, templateOptions: Partial<TemplateOptions>): string {
+		const { argSeparator = "; " } = templateOptions;
 
-		return this.variables.reduce((currentText, currentVariable) => {
-			return render({
-				options,
-				text: currentText,
-				variableName: currentVariable.name,
-				variableValue: currentVariable.getValue(),
-				renderCallback: (value, valueOption) => {
-					return this.replaceOne({ name: currentVariable.name, value }, valueOption, argSeparator);
-				},
-			});
-		}, text);
+		return render({
+			text,
+			templateOptions,
+			renderCallback: (sourceText, sourceMatch, variable, options) => {
+				const foundVariable = this.findVariable(variable);
+
+				if (!foundVariable) return text;
+
+				const reduced = options.reduce((currentValue, currentOption) => {
+					const result = this.replaceOne({ name: variable, value: currentValue }, currentOption, argSeparator);
+
+					return result;
+				}, foundVariable.getValue());
+
+				const replaced = sourceText.replace(sourceMatch, reduced);
+
+				return replaced;
+			},
+		});
 	}
 }

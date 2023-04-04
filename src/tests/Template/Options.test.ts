@@ -42,7 +42,7 @@ describe("Options", () => {
 			variables: [FILENAME, VAR],
 		});
 
-		const text = "$[FILENAME:WITHOUT_EXT:UPPER] $[VAR:RANGE(, 3):REPEAT(2, |)]";
+		const text = "$[FILENAME:WITHOUT_EXT:UPPER] $[VAR:RANGE(; 3):REPEAT(2; |)]";
 
 		const result = "APPLICATION var|var";
 

@@ -9,7 +9,7 @@ describe("Parameters", () => {
 			variables: [FILENAME],
 		});
 
-		const text1 = "$[FILENAME:RANGE(0, 3)]";
+		const text1 = "$[FILENAME:RANGE(0; 3)]";
 
 		expect(replace(text1)).toBe("app");
 	});
@@ -20,16 +20,16 @@ describe("Parameters", () => {
 			variables: [FILENAME],
 		});
 
-		const text1 = "$[FILENAME:WITHOUT_EXT:RANGE(0, )]";
+		const text1 = "$[FILENAME:WITHOUT_EXT:RANGE(0; )]";
 		const text2 = "$[FILENAME:RANGE(12)]";
-		const text3 = "$[FILENAME:WITHOUT_EXT:RANGE(, 11)]";
+		const text3 = "$[FILENAME:WITHOUT_EXT:RANGE(; 11)]";
 		const text4 = "$[FILENAME:WITHOUT_EXT:RANGE]";
-		const text5 = "$[FILENAME:ONLY_EXT:REPEAT(3, |)]";
-		const text6 = "$[FILENAME:ONLY_EXT:REPEAT(5, )]";
+		const text5 = "$[FILENAME:ONLY_EXT:REPEAT(3; |)]";
+		const text6 = "$[FILENAME:ONLY_EXT:REPEAT(5; )]";
 		const text7 = "$[FILENAME:ONLY_EXT:REPEAT(5)]";
-		const text8 = "$[FILENAME:SPEC_OPTION(1, , 5)]";
-		const text9 = "$[FILENAME:SPEC_OPTION(, , 10)]";
-		const text10 = "$[FILENAME:ONLY_EXT:REPEAT(, |)]";
+		const text8 = "$[FILENAME:SPEC_OPTION(1; ; 5)]";
+		const text9 = "$[FILENAME:SPEC_OPTION(; ; 10)]";
+		const text10 = "$[FILENAME:ONLY_EXT:REPEAT(; |)]";
 		const text11 = "$[FILENAME:SPEC_OPTION]";
 
 		expect(replace(text1)).toBe("application");

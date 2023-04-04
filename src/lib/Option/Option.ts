@@ -1,27 +1,48 @@
-/**
- * @callback TransformFunctionCallback
- *
- * @param {string} value
- * @param {Array|undefined} args
- */
-
 import { ApplyOptionError, BaseError } from "@errors/custom";
-import { Arg } from "@/helpers";
+import { Arg, stringSlice } from "@/helpers";
+import { AbstractArgumentsHandler } from "./lib/AbstractArgumentsHandler";
+import { UndefinedArgumentsHandler } from "./lib/UndefinedArgumentsHandler";
+import { NumberArgumentsHandler } from "./lib/NumberArgumentsHandler";
+import { parseArgs } from "@/helpers/parseArgs";
+import { between } from "@/helpers/between";
+import { InitialArgumentsHandler } from "./lib/InitialArgumentsHandler";
 
-export type TransformFunction<Args extends Arg[]> = (value: string, args?: Args) => string;
+/**
+ * @param value - variable's value
+ * @param args - option's args
+ */
+export type TransformFunction<Args extends Arg[]> = (value: string, args: Args) => string;
 
 interface TransformFunctionArgs {
+	/**
+	 * Found option name
+	 */
 	option: string;
-	args?: Arg[];
+	/**
+	 * Option's args
+	 */
+	args: Arg[];
 }
 
+const initialHandler = new InitialArgumentsHandler();
+const undefinedHandler = new UndefinedArgumentsHandler();
+const numberHandler = new NumberArgumentsHandler();
+
+initialHandler.setNext(undefinedHandler).setNext(numberHandler);
+
 export class Option<Args extends Arg[] = Arg[]> {
+	private static handler: AbstractArgumentsHandler = initialHandler;
+
 	/**
 	 *
 	 * @param {string} name - option's name
-	 * @param {TransformFunctionCallback} transform
+	 * @param transform - function that changes variable's value
 	 */
-	constructor(public readonly name: string, private transform: TransformFunction<Args>) {}
+	constructor(public readonly name: string, private transform: TransformFunction<Args | []>) {}
+
+	public static setHandlers(argumentHandlers: AbstractArgumentsHandler[] = []): void {
+		argumentHandlers.reduce((acc, currentHandler) => acc.setNext(currentHandler), this.handler);
+	}
 
 	/**
 	 * Transforms the given value and returns it
@@ -30,7 +51,7 @@ export class Option<Args extends Arg[] = Arg[]> {
 	 * @param {Array} args - array of given parameters. Can be undefined if there is no parameters to the option
 	 * @returns {string}
 	 */
-	public apply(value: string, args?: Args): string | never {
+	public apply(value: string, args: Args): string | never {
 		try {
 			return this.transform(value, args);
 		} catch (error) {
@@ -48,34 +69,21 @@ export class Option<Args extends Arg[] = Arg[]> {
 		}
 	}
 
-	private static parseArgs(argSeparator: string, args?: string): Arg[] | undefined {
-		if (args !== undefined) {
-			return args.split(argSeparator).map((arg) => {
-				if (!arg || arg === " ") return undefined;
-				if (!Number.isNaN(Number(arg))) return Number(arg);
-				else return arg;
-			});
-		}
-	}
-
 	/**
 	 *
-	 * @param {string} variableOption
-	 * @param {object} argOptions
-	 * @returns {TransformFunctionArgs}
+	 * @param variableOption - found option in the template
+	 * @param argSeparator - arguments separator
 	 */
-	public static parse(variableOption: string, argSeparator: string): TransformFunctionArgs | null {
-		const regex = new RegExp(`(?<option>[\\w+_\\-]{2,})(\\((?<args>(.+(${argSeparator})*))\\))?`, "ig");
-		const result = regex.exec(variableOption);
-		if (result) {
-			const { groups } = result;
-			if (groups) {
-				return {
-					option: groups.option,
-					args: this.parseArgs(argSeparator, groups.args),
-				};
-			}
-		}
-		return null;
+	public static parse(variableOption: string, argSeparator: string): TransformFunctionArgs {
+		const result = between(variableOption, "(", ")");
+
+		const args: Arg[] = result ? parseArgs(Option.handler, argSeparator, stringSlice(result.string, 1, -1)) : [];
+
+		return {
+			option: variableOption.split("(")[0],
+			args,
+		};
 	}
 }
+
+export { AbstractArgumentsHandler };

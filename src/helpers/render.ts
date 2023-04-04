@@ -1,27 +1,46 @@
-import { getTemplateString } from "./getTemplateString";
+import { betweenMany } from "./betweenMany";
+import { stringSlice } from "./stringSlice";
 import { TemplateOptions } from "./types";
 
-type IRenderCallback = (currentValue: string, valueOption: string) => string;
+type IRenderCallback = (text: string, sourceMatch: string, variable: string, options: string[]) => string;
 
 interface RenderOptions {
+	/**
+	 * Source text
+	 */
 	text: string;
-	variableName: string;
-	variableValue: string;
-	options: Partial<TemplateOptions>;
+	/**
+	 * Template options
+	 */
+	templateOptions: Partial<TemplateOptions>;
+	/**
+	 * Render callback is called for every found option. Returns modified string
+	 *
+	 * @param text
+	 * @param sourceMatch - the found match
+	 * @param variable - variable's name
+	 * @param options - variable's options in the text
+	 */
 	renderCallback: IRenderCallback;
 }
 
-export function render(renderOptions: RenderOptions) {
-	const { options, renderCallback, text, variableName, variableValue } = renderOptions;
+/**
+ *
+ * @param renderOptions
+ */
+export function render(renderOptions: RenderOptions): string {
+	const { renderCallback, templateOptions, text } = renderOptions;
 
-	const templateString = getTemplateString(variableName, options);
-	const regex = new RegExp(templateString, "g");
+	const { begin = "[", end = "]", prefix = "$", suffix = "", optionSeparator = ":" } = templateOptions;
 
-	const { optionSeparator = ":" } = options;
+	const left = prefix + begin;
+	const right = end + suffix;
 
-	return text.replace(regex, (_, options: string) => {
-		const variableOptions = options ? options.split(optionSeparator) : [];
+	const matches = betweenMany(text, left, right);
 
-		return variableOptions.reduce(renderCallback, variableValue);
-	});
+	return matches.reduce((modified, currentMatch) => {
+		const [variable, ...options] = stringSlice(currentMatch, left.length, -right.length).split(optionSeparator);
+
+		return renderCallback(modified, currentMatch, variable, options);
+	}, text);
 }

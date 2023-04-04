@@ -1,1 +1,1 @@
-export type Arg = string | number | undefined;
+export type Arg = unknown;

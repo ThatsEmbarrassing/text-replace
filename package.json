@@ -20,13 +20,13 @@
 		"./errors": {
 			"import": "./dist/es/errors.mjs",
 			"require": "./dist/cjs/errors.js",
-			"types": "./dist/types/errors/CustomErrors/index.d.ts",
+			"types": "./dist/types/errors.d.ts",
 			"default": "./dist/es/errors.mjs"
 		},
 		"./error-handlers": {
 			"import": "./dist/es/error-handlers.mjs",
 			"require": "./dist/cjs/error-handlers.js",
-			"types": "./dist/types/errors/ErrorHandlers/index.d.ts",
+			"types": "./dist/types/error-handlers.d.ts",
 			"default": "./dist/es/error-handlers.mjs"
 		}
 	},
@@ -36,10 +36,10 @@
 				"./dist/types/index.d.ts"
 			],
 			"errors": [
-				"./dist/types/errors/CustomErrors/index.d.ts"
+				"./dist/types/errors.d.ts"
 			],
 			"error-handlers": [
-				"./dist/types/errors/ErrorHandlers/index.d.ts"
+				"./dist/types/error-handlers.d.ts"
 			]
 		}
 	},

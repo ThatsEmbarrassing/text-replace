@@ -1,6 +1,6 @@
-import { Option, Value } from "./lib";
+import { AbstractArgumentsHandler, Option, Value, TransformFunction } from "./lib";
 import { Template } from "./lib/Template/Template";
-import { TemplateOptions } from "@/helpers";
+import { Arg, TemplateOptions } from "@/helpers";
 import {
 	DefaultErrorHandler,
 	ApplyOptionErrorHandler,
@@ -9,41 +9,68 @@ import {
 } from "./errors/ErrorHandlers/";
 
 export interface ConfigureVariable {
+	/**
+	 * Variable's name.
+	 */
 	name: string;
+	/**
+	 * Variable's value.
+	 */
 	value: Value;
-	options: Option[];
+	/**
+	 * Variable's options to transform only its value.
+	 */
+	options: ConfigureOption[];
 }
 
-export interface ConfigureOptions {
+export interface ConfigureOption<Args extends Arg[] = Arg[]> {
+	/**
+	 * Option's name
+	 */
+	name: string;
+	/**
+	 * Function that changes the variable's value
+	 */
+	transform: TransformFunction<Args | []>;
+}
+
+export interface ReplaceConfiguration {
+	/**
+	 * Your variables.
+	 */
 	variables: ConfigureVariable[];
-	globalOptions: Option[];
+	/**
+	 * Global options to transform any variable.
+	 */
+	globalOptions: ConfigureOption[];
+	/**
+	 * Template options to customize the template in the text.
+	 */
 	templateOptions?: Partial<TemplateOptions>;
+	/**
+	 * To handle your own errors.
+	 */
 	errorHandle?: ErrorHandle;
+	/**
+	 * Argument handlers. It's needed to handle your own arguments. See more:
+	 */
+	argumentHandlers?: AbstractArgumentsHandler[];
 }
-
-/**
- *
- * @typedef {Object} ConfigureVariable
- * @property {string} name
- * @property {value} value
- * @property {Option[]} options
- */
-
-/**
- * @typedef {Object} ConfigureOptions
- * @property {ConfigureVariable[]} variables
- * @property {Option[]} globalOptions
- * @property {boolean} overwrite
- */
 
 /**
  * Returns replace function that calls render method of the configured template object
  *
- * @param {ConfigureOptions} options
+ * @param {object} options
  */
 
-export function Configure(options: ConfigureOptions) {
-	const { globalOptions, variables, errorHandle = new ErrorHandle(), templateOptions = {} } = options;
+export function Configure(options: ReplaceConfiguration) {
+	const {
+		globalOptions,
+		variables,
+		errorHandle = new ErrorHandle(),
+		templateOptions = {},
+		argumentHandlers = [],
+	} = options;
 
 	errorHandle.use("GET_VALUE_ERROR", new GetValueErrorHandler());
 	errorHandle.use("APPLY_OPTION_ERROR", new ApplyOptionErrorHandler());
@@ -51,15 +78,17 @@ export function Configure(options: ConfigureOptions) {
 
 	const template = new Template();
 
+	Option.setHandlers(argumentHandlers);
+
 	variables.forEach(({ name, options, value }) => {
 		template.addVariable({ name, value });
 		options.forEach((option) => {
-			template.addLocalOption(option, name);
+			template.addLocalOption(new Option(option.name, option.transform), name);
 		});
 	});
 
 	globalOptions.forEach((option) => {
-		template.addGlobalOption(option);
+		template.addGlobalOption(new Option(option.name, option.transform));
 	});
 
 	return function replace(text: string) {
@@ -68,7 +97,7 @@ export function Configure(options: ConfigureOptions) {
 		} catch (err) {
 			const error = err as Error;
 
-			errorHandle.handle(error.name, error);
+			errorHandle.handle(error);
 		}
 	};
 }
