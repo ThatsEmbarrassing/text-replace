@@ -1,0 +1,4 @@
+{
+	"*": "prettier --list-different",
+	".ts": ["npm run lint:ts:fix --debug", "npm run test"]
+}
